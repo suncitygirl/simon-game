@@ -48,16 +48,17 @@ html, body {
     background-color: #00b0ff;
 }
 .outer-round__item--green-active {
-    background-color: #64dd17;
+    background: linear-gradient(135deg, #9CCC65 10%, #7CB342, #558B2F, #33691E 80%);
+    background-color: red;
 }
 .outer-round__item--red-active {
-    background-color: #d50000;
+    background: linear-gradient(135deg, #FFCDD2, #EF9A9A, #C62828, #B71C1C 80%);
 }
 .outer-round__item--yellow-active {
-    background-color: #fff176;
+    background: linear-gradient(135deg, #FFE57F 10%, #FFD740, #FFC400, #FFAB00 80%);
 }
 .outer-round__item--blue-active {
-    background-color: #0091ea;
+    background: linear-gradient(135deg, #B3E5FC 10%, #039BE5, #0277BD, #01579B 80%);
 }
 .inner-round {
     position: absolute;
@@ -86,7 +87,7 @@ html, body {
     background-color: #f5f5f5;
     border-radius: 25%;
 }
-.inner-round__start {
+.inner-round__btn {
     display: block;
     width: 100px;
     height: 30px;
@@ -97,4 +98,8 @@ html, body {
     color: #424242;
     background-color: #fce4ec;
     border-radius: 10%;
+    outline: none;
+}
+.inner-round__btn:active {
+    background-color: #F8BBD0;
 }

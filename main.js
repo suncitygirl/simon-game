@@ -1,10 +1,11 @@
 'use strict'
 
+//Single object constructor
 var Game = (function() {
     //разобраться с публичным/приватным
     var game = {
         wins: 0,
-        sequence: [3, 2, 1, 0, 0, 0, 1],
+        sequence: [],
         colors: ['green', 'red', 'yellow', 'blue'],
         getRandom: function() {
             var rand = Math.round(Math.random() * 3)
@@ -19,50 +20,129 @@ var Game = (function() {
     };
 })();
 
+//Here is an entry point
+(function() {
+    var innerRound = document.getElementsByClassName('inner-round')[0];
+    var outerRound = document.getElementsByClassName('outer-round')[0];
+    var btn = innerRound.getElementsByClassName('inner-round__btn')[0];
+    Game.getSetting().sectorList = outerRound.getElementsByClassName('outer-round__item');
+    Game.getSetting().audioList = document.getElementsByTagName('audio');
+    btn.addEventListener('click', start);
+})();
+
+function start() {
+    clearGame();
+    computerMove();
+    playerMove();
+}
+
+function clearGame() {
+    changeClickability();
+    var game = Game.getSetting();
+    game.wins = 0;
+    game.sequence = [];
+    renderCounter();
+}
+
+//Make user not to be allowed to click on buttons during anumation
+function changeClickability() {
+    var round = document.getElementsByClassName('outer-round')[0];
+    if (round.style.pointerEvents === 'auto') {
+        round.style.pointerEvents = 'none';
+    } else {
+        round.style.pointerEvents = 'auto';
+    }
+}
+
+function renderCounter() {
+    var counter = document.getElementsByClassName('inner-round__counter')[0];
+    var game = Game.getSetting();
+    counter.textContent = game.wins;
+}
+
 function computerMove() {
     var game = Game.getSetting();
-    var iterator = 0;
+    game.getRandom();
+    changeClickability()
+    var i = 0;
+    var runSequence = setTimeout(Animate, 400);
 
-    function switchColor() {
-        var colorIndex = game.sequence[iterator];
+    //It is gonna be a little bit simplier to read
+    //Refactor it later
+    function Animate() {
+        var colorIndex = game.sequence[i];
         var color = game.colors[colorIndex];
         var modifierClass = 'outer-round__item--' + color + '-active';
         if (!game.sectorList[colorIndex].classList.contains(modifierClass)) {
             game.sectorList[colorIndex].classList.toggle(modifierClass);
-            runSequence = setTimeout(switchColor, 500);
+            game.sectorList[colorIndex].firstElementChild.play();
+            runSequence = setTimeout(Animate, 400);
         } else {
             game.sectorList[colorIndex].classList.toggle(modifierClass);
-            var colorIndex = game.sequence[iterator++];
-            if (iterator < game.sequence.length) {
-                runSequence = setTimeout(switchColor, 500);
+            var colorIndex = game.sequence[i++];
+            if (i < game.sequence.length) {
+                runSequence = setTimeout(Animate, 400);
+            } else {
+                changeClickability();
             }
         }
     }
-    var runSequence = setTimeout(switchColor, 500);
 }
 
 function playerMove() {
     var game = Game.getSetting();
-    var iterator = 0;
-    function clickRecorder(event) {
-        
+    var i = 0;
+    var round = document.getElementsByClassName('outer-round')[0];
+
+    function isInCircle(elem, x, y) {
+        var rect = elem.getBoundingClientRect()
+        var radius = (rect.bottom - rect.top) / 2;
+        var centerX = (rect.right - rect.left) / 2 + rect.left;
+        var centerY = (rect.bottom - rect.top) / 2 + rect.top;
+        //Simply calculating a distance between the point with
+        //click coords and the center point of outer-round circle
+        //To make sure (x, y) is inside the circle we compare it with the radius
+        //Here is a formula:
+        if (Math.sqrt(Math.pow((x - centerX), 2) + Math.pow((y - centerY), 2)) <= radius) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    [].forEach.call(game.sectorList, function(item) {
-      item.addEventListener('click', clickRecorder);
+
+    function renderMistake(elem) {
+        elem.style.backgroundColor = '#fce4ec';
+        setTimeout(function() {
+            elem.style.backgroundColor = '';
+        }, 1000);
+    }
+
+    function clickChecker(clicked) {
+        if (clicked == game.sectorList[game.sequence[i]]) {
+            if (i == game.sequence.length - 1) {
+                game.wins++;
+                renderCounter();
+                i = 0;
+                setTimeout(computerMove, 700);
+            } else {
+                i++;
+            }
+        } else {
+            [].forEach.call(game.sectorList, function(sector) {
+                sector.removeEventListener('click', clickRecorder);
+                renderMistake(sector);
+            });
+            clearGame();
+        }
+    }
+
+    function clickRecorder(event) {
+        if (isInCircle(round, event.clientX, event.clientY)) {
+            this.firstElementChild.play();
+            clickChecker(this);
+        }
+    }
+    [].forEach.call(game.sectorList, function(sector) {
+        sector.addEventListener('click', clickRecorder);
     });
 }
-
-function isLost() {
-    return (Game.getSetting().wins === 0) ? true : false;
-}
-
-function start() {
-    // do {
-        computerMove();
-        playerMove();
-    // } while (isLost());
-}
-
-var btn = document.getElementsByClassName('inner-round__btn')[0];
-Game.getSetting().sectorList = document.getElementsByClassName('outer-round__item');
-btn.addEventListener('click', start);

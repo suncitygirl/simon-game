@@ -4,6 +4,15 @@ html, body {
     background: #f5f5f5;
     font-family: 'Roboto', Arial, sans-serif;
 }
+.overflow {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  position: relative;
+  z-index: 100;
+  border-radius: 100%;
+  pointer-events: none;
+}
 .wrapper {
     position: relative;
     width: 500px;
@@ -12,6 +21,7 @@ html, body {
 }
 .outer-round {
     position: absolute;
+    z-index: 1;
     top: 0;
     left: 0;
     width: 480px;
@@ -19,9 +29,10 @@ html, body {
     margin: 0;
     padding: 0;
     list-style: none;
-    border-radius: 50%;
+    border-radius: 100%;
     overflow: hidden;
     border: solid 10px #fff;
+    pointer-events: none;
 }
 .outer-round__item {
     position: absolute;
@@ -31,6 +42,7 @@ html, body {
     height: 235px;
     border: solid 5px #fff;
     transform-origin: 100% 100%;
+    overflow: hidden;
 }
 .outer-round__item--green {
     background-color: #b2ff59;
@@ -47,35 +59,40 @@ html, body {
     transform: rotate(-90deg);
     background-color: #00b0ff;
 }
-.outer-round__item--green-active {
+.outer-round__item--green-active,
+.outer-round__item--green:active {
     background: linear-gradient(135deg, #9CCC65 10%, #7CB342, #558B2F, #33691E 80%);
     background-color: red;
 }
-.outer-round__item--red-active {
+.outer-round__item--red-active,
+.outer-round__item--red:active {
     background: linear-gradient(135deg, #FFCDD2, #EF9A9A, #C62828, #B71C1C 80%);
 }
-.outer-round__item--yellow-active {
+.outer-round__item--yellow-active,
+.outer-round__item--yellow:active {
     background: linear-gradient(135deg, #FFE57F 10%, #FFD740, #FFC400, #FFAB00 80%);
 }
-.outer-round__item--blue-active {
+.outer-round__item--blue-active,
+.outer-round__item--blue:active {
     background: linear-gradient(135deg, #B3E5FC 10%, #039BE5, #0277BD, #01579B 80%);
 }
 .inner-round {
     position: absolute;
+    z-index: 2;
     top: 50%;
     left: 50%;
     transform: translateY(-50%) translateX(-50%);
     width: 200px;
     height: 200px;
     border: solid 10px #fff;
-    border-radius: 50%;
+    border-radius: 100%;
     background-color: #fff;
 }
 .inner-round__header {
     text-align: center;
     color: #f8bbd0
 }
-.inner-round__count {
+.inner-round__counter {
     width: 60px;
     height: 40px;
     margin: 0 auto;
@@ -99,6 +116,7 @@ html, body {
     background-color: #fce4ec;
     border-radius: 10%;
     outline: none;
+    /*pointer-events: auto;*/
 }
 .inner-round__btn:active {
     background-color: #F8BBD0;

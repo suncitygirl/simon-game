@@ -1,18 +1,20 @@
-'use strict'
+'use strict';
 
-//Single object constructor
 var Game = (function() {
-    //разобраться с публичным/приватным
     var game = {
         wins: 0,
         sequence: [],
         colors: ['green', 'red', 'yellow', 'blue'],
+        isRunning: function() {
+            console.log(this.sequence.length);
+            if (this.sequence.length === 0) return false;
+            else return true;
+        },
         getRandom: function() {
             var rand = Math.round(Math.random() * 3)
             this.sequence.push(rand);
         },
     };
-
     return {
         getSetting: function() {
             return game;
@@ -20,17 +22,16 @@ var Game = (function() {
     };
 })();
 
-//Here is an entry point
+//an entry point
 (function() {
-    var innerRound = document.getElementsByClassName('inner-round')[0];
-    var outerRound = document.getElementsByClassName('outer-round')[0];
-    var btn = innerRound.getElementsByClassName('inner-round__btn')[0];
-    Game.getSetting().sectorList = outerRound.getElementsByClassName('outer-round__item');
-    Game.getSetting().audioList = document.getElementsByTagName('audio');
+    var btn = document.getElementsByClassName('inner-round__btn')[0];
+    Game.getSetting().sectorList = document.getElementsByClassName('outer-round__item');
     btn.addEventListener('click', start);
 })();
 
 function start() {
+    if (Game.getSetting().isRunning()) return;
+    changeClickability();
     clearGame();
     computerMove();
     playerMove();
@@ -63,7 +64,7 @@ function renderCounter() {
 function computerMove() {
     var game = Game.getSetting();
     game.getRandom();
-    changeClickability()
+    // changeClickability()
     var i = 0;
     var runSequence = setTimeout(Animate, 400);
 
@@ -123,8 +124,10 @@ function playerMove() {
                 game.wins++;
                 renderCounter();
                 i = 0;
+                changeClickability()
                 setTimeout(computerMove, 700);
             } else {
+
                 i++;
             }
         } else {
